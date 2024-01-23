@@ -1,4 +1,4 @@
-name: 'php-stan'
+name: 'php-psalm'
 
 on:
   workflow_call:
@@ -9,11 +9,10 @@ on:
         type: string
 
 jobs:
-  stan:
-    name: 'Static code analyzer'
+  psalm:
+    name: 'Check with psalm'
     if: "!contains(github.event.commits[0].message, '[skip ci]') && !contains(github.event.commits[0].message, '[ci skip]')"
     runs-on: 'ubuntu-latest'
-    continue-on-error: true
 
     strategy:
       matrix:
@@ -21,7 +20,7 @@ jobs:
 
     steps:
       - name: 'Checkout current revision'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@v4'
 
       - name: 'Setup PHP'
         uses: 'shivammathur/setup-php@v2'
@@ -47,5 +46,5 @@ jobs:
       - name: 'Install dependencies with Composer'
         run: 'composer install --prefer-dist --no-interaction'
 
-      - name: 'Run PHP STAN'
-        run: vendor/bin/phpstan analyse --no-progress --error-format=github
+      - name: 'Run psalm'
+        run: vendor/bin/psalm --php-version=${{ matrix.php-version }}
